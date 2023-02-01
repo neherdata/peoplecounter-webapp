@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from ms_identity_web import IdentityWebPython
+from ms_identity_web.configuration import AADConfig
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,14 +21,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+ADMINS = [
+    ('Tyler Neher', 'tyler@neherdata.com'),
+    ('James Westover', 'james@neherdata.com')
+]
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-6d0*=i!s5%-j&-k7+xiz+8sm1mc72)mhq-+t@7m4x_k!xbbgs!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['peoplecounter.azurewebsites.net',
+                 'peoplecounter.neherdata.tools',
+                 'localhost',
+                 '127.0.0.1']
 
 
 # Application definition
@@ -115,9 +125,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'peoplecounter/static_collected')
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "peoplecounter/static"
+]
+AAD_CONFIG = AADConfig.parse_json(file_path='aad.config.json')
+MS_IDENTITY_WEB = IdentityWebPython(AAD_CONFIG)
+# for rendering 401 or other errors from msal_middleware
+ERROR_TEMPLATE = 'auth/{}.html'
+MIDDLEWARE.append('ms_identity_web.django.middleware.MsalMiddleware')

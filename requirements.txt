@@ -3,3 +3,4 @@ pylint
 autopep8
 django-crispy-forms
 psycopg2
+git+https://github.com/azure-samples/ms-identity-python-utilities@main
