@@ -3,4 +3,3 @@ pylint
 autopep8
 django-crispy-forms
 psycopg2
-az-cli
